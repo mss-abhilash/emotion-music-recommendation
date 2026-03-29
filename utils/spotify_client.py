@@ -12,7 +12,6 @@ import webbrowser
 import subprocess
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from spotify_config import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
 import time
 
 # Path to cache file (relative). Keep this file private.
@@ -20,6 +19,49 @@ CACHE_PATH = ".cache-spotify"
 
 # OAuth scopes required
 SCOPE = "user-read-playback-state user-modify-playback-state user-read-currently-playing"
+
+def _load_spotify_credentials():
+    """
+    Load Spotify credentials from environment first, then fallback to spotify_config.py.
+    This keeps secrets out of source control by default.
+    """
+    client_id = os.getenv("SPOTIFY_CLIENT_ID")
+    client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
+    redirect_uri = os.getenv("SPOTIFY_REDIRECT_URI", "http://127.0.0.1:8080/callback")
+
+    file_client_id = None
+    file_client_secret = None
+    file_redirect_uri = None
+
+    try:
+        from spotify_config import CLIENT_ID as CFG_CLIENT_ID, CLIENT_SECRET as CFG_CLIENT_SECRET, REDIRECT_URI as CFG_REDIRECT_URI
+        file_client_id = CFG_CLIENT_ID
+        file_client_secret = CFG_CLIENT_SECRET
+        file_redirect_uri = CFG_REDIRECT_URI
+    except Exception:
+        # Optional local config file; env vars are preferred.
+        pass
+
+    client_id = client_id or file_client_id
+    client_secret = client_secret or file_client_secret
+    redirect_uri = redirect_uri or file_redirect_uri
+
+    missing = []
+    if not client_id:
+        missing.append("SPOTIFY_CLIENT_ID / CLIENT_ID")
+    if not client_secret:
+        missing.append("SPOTIFY_CLIENT_SECRET / CLIENT_SECRET")
+    if not redirect_uri:
+        missing.append("SPOTIFY_REDIRECT_URI / REDIRECT_URI")
+
+    if missing:
+        raise RuntimeError(
+            "Missing Spotify config: "
+            + ", ".join(missing)
+            + ". Set env vars or create spotify_config.py from spotify_config.py.example."
+        )
+
+    return client_id, client_secret, redirect_uri
 
 def _write_cache(path, token_info):
     try:
@@ -39,10 +81,11 @@ def _read_cache(path):
         return None
 
 def _build_oauth():
+    client_id, client_secret, redirect_uri = _load_spotify_credentials()
     return SpotifyOAuth(
-        client_id=CLIENT_ID,
-        client_secret=CLIENT_SECRET,
-        redirect_uri=REDIRECT_URI,
+        client_id=client_id,
+        client_secret=client_secret,
+        redirect_uri=redirect_uri,
         scope=SCOPE,
         cache_path=None,  # we manage cache file ourselves
         show_dialog=False  # don't force showing consent again if cached

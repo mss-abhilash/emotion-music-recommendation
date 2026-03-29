@@ -1,218 +1,127 @@
-# 🎭🎵 Emotion-Based Music Player
+# Emotion-Based Music Recommendation System
 
-> Real-time facial emotion detection with YOLOv11 that plays mood-matched Spotify playlists
+### Detect your mood. Play your vibe.
 
-![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
-![YOLOv11](https://img.shields.io/badge/YOLOv11-Ultralytics-00FFFF.svg)
-![Spotify](https://img.shields.io/badge/Spotify-1ED760?logo=spotify&logoColor=white)
-![OpenCV](https://img.shields.io/badge/OpenCV-5C3EE8?logo=opencv&logoColor=white)
+Emotion-Based Music Recommendation System is a Python application that uses real-time computer vision to detect facial emotions from a webcam feed and recommend matching music through Spotify.
+It combines an emotion detection model, OpenCV-based video processing, and Spotify playback control to create a seamless, interactive experience.
+The system is designed to be fast, practical, and easy to extend for future AI and product features.
 
-## 📖 Overview
+## Features
 
-This project combines computer vision and music streaming to create an intelligent emotion-aware music player. Using a custom-trained YOLOv11 model, it detects facial expressions in real-time through your webcam and automatically plays Spotify playlists that match your current mood.
+- Real-time emotion detection using webcam
+- Music recommendation based on detected emotion
+- Integration with Spotify API for playback
+- Fast and responsive runtime flow
+- Modular and scalable code structure
 
-### ✨ Features
+## Tech Stack
 
-- 🎯 **Real-time Emotion Detection**: Detects 8 different emotions using YOLOv11
-- 🎵 **Automatic Playlist Selection**: Maps emotions to curated Spotify playlists
-- 📹 **Live Webcam Feed**: Visual feedback with bounding boxes and confidence scores
-- 🔐 **Spotify Integration**: Seamless OAuth authentication with token caching
-- ⚡ **Quick Controls**: Simple keyboard shortcuts for capture and playback
+- Python
+- OpenCV
+- YOLO (emotion detection model)
+- Spotify Web API (via Spotipy)
+- NumPy
+- Ultralytics
 
-### 🎭 Supported Emotions
+## Project Structure
 
-| Emotion | Playlist Theme |
-|---------|---------------|
-| 😠 Anger | Rock Hard |
-| 😌 Content | Chill Vibes |
-| 🤢 Disgust | Intense Beats |
-| 😨 Fear | Calm Down |
-| 😊 Happy | Happy Hits |
-| 😐 Neutral | Acoustic Chill |
-| 😢 Sad | Sad Songs |
-| 😲 Surprise | Top Hits |
+```text
+Emotion-based-music-recommendation-system/
+|-- main.py
+|-- config.py
+|-- spotify_config.py
+|-- best.pt
+|-- requirements.txt
+|-- utils/
+|   |-- camera.py
+|   |-- emotion_to_song.py
+|   |-- spotify_client.py
+```
 
-## 🚀 Getting Started
+- `main.py`: Application entry point. Handles webcam loop, key controls, emotion capture, and playback trigger.
+- `config.py`: Core settings such as model path, confidence threshold, and emotion labels.
+- `spotify_config.py`: Local Spotify credentials and redirect URI configuration.
+- `utils/`: Helper modules for camera/model inference, emotion-to-playlist mapping, and Spotify authentication/playback.
+- `best.pt`: Trained YOLO model weights used for emotion detection.
 
-### Prerequisites
+## How It Works
 
-- Python 3.8 or higher
-- Webcam/camera access
-- Spotify Premium account (required for playback control)
-- Spotify Developer App credentials
+1. Capture webcam input in real time.
+2. Detect face and emotion using the trained model.
+3. Map the detected emotion to a music category or playlist.
+4. Fetch and control playback through Spotify API.
+5. Play the recommended music for the detected emotion.
 
-### Installation
+## Installation & Setup
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/YOLOv11-emotion-music-player.git
-   cd YOLOv11-emotion-music-player
-   ```
+1. Clone the repository:
 
-2. **Create and activate virtual environment**
-   ```powershell
-   # Windows PowerShell
-   python -m venv .venv
-   .\.venv\Scripts\Activate.ps1
-   ```
-   
-   ```bash
-   # Linux/macOS
-   python -m venv .venv
-   source .venv/bin/activate
-   ```
+```bash
+git clone https://github.com/your-username/emotion-based-music-recommendation-system.git
+cd emotion-based-music-recommendation-system
+```
 
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+2. Create and activate a virtual environment:
 
-4. **YOLOv11 Model**
-   - The pre-trained `best.pt` model is included in this repository
-   - No additional download required!
-   - (Optional) You can replace it with your own trained model and update `MODEL_PATH` in `config.py`
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
 
-5. **Configure Spotify API**
-   - Create a Spotify Developer App at [Spotify Dashboard](https://developer.spotify.com/dashboard)
-   - Note your `Client ID` and `Client Secret`
-   - Add `http://127.0.0.1:8080/callback` to Redirect URIs in app settings
-   - Update `spotify_config.py` with your credentials:
-     ```python
-     CLIENT_ID = "your_client_id_here"
-     CLIENT_SECRET = "your_client_secret_here"
-     REDIRECT_URI = "http://127.0.0.1:8080/callback"
-     ```
+3. Install dependencies:
 
-## 🎮 Usage
+```bash
+pip install -r requirements.txt
+```
 
-### Running the Application
+4. Configure Spotify credentials (recommended: environment variables).
+
+5. Run the project:
 
 ```bash
 python main.py
 ```
 
-### Controls
+## Configuration
 
-| Key | Action |
-|-----|--------|
-| `q` | Capture current emotion and play matched playlist |
-| `r` | Force re-authentication (clears Spotify cache) |
-| `ESC` | Exit application |
+Set credentials using environment variables (recommended):
 
-### First Run
-
-1. Launch the application - your webcam feed will appear
-2. On first run, you'll be redirected to Spotify for authorization
-3. Grant the requested permissions
-4. You'll be redirected back automatically (token is cached for future use)
-5. Press `q` when your face is visible to detect emotion and start playback
-
-## 📁 Project Structure
-
-```
-YOLOv11/
-│
-├── main.py                 # Main application entry point
-├── config.py              # Model and emotion configuration
-├── spotify_config.py      # Spotify API credentials (⚠️ DO NOT COMMIT)
-├── requirements.txt       # Python dependencies
-├── best.pt               # Pre-trained YOLOv11 emotion detection model (included)
-│
-├── utils/
-│   ├── camera.py         # Camera handling and YOLO detection
-│   ├── emotion_to_song.py # Emotion-to-playlist mapping
-│   └── spotify_client.py  # Spotify API integration
-│
-└── models/               # Additional model files (if needed)
+```powershell
+$env:SPOTIFY_CLIENT_ID = "your_spotify_client_id"
+$env:SPOTIFY_CLIENT_SECRET = "your_spotify_client_secret"
+$env:SPOTIFY_REDIRECT_URI = "http://127.0.0.1:8080/callback"
 ```
 
-## ⚙️ Configuration
+Or create a local file named `spotify_config.py` in the project root (kept out of Git by `.gitignore`) and add:
 
-### `config.py`
 ```python
-MODEL_PATH = "best.pt"           # Path to your YOLOv11 model
-CONFIDENCE = 0.45                # Detection confidence threshold
-EMOTION_NAMES = [...]           # Emotion class labels
+CLIENT_ID = "your_spotify_client_id"
+CLIENT_SECRET = "your_spotify_client_secret"
+REDIRECT_URI = "http://127.0.0.1:8080/callback"
 ```
 
-### `utils/emotion_to_song.py`
-Customize playlist URIs for each emotion:
-```python
-PLAYLISTS = {
-    "happy": "spotify:playlist:YOUR_PLAYLIST_ID",
-    # ... other emotions
-}
-```
+Make sure the same redirect URI is configured in your Spotify Developer Dashboard.
 
-## 🛠️ Technologies Used
+## Screenshots
 
-- **[YOLOv11](https://github.com/ultralytics/ultralytics)**: State-of-the-art object detection
-- **[OpenCV](https://opencv.org/)**: Computer vision and webcam handling
-- **[Spotipy](https://spotipy.readthedocs.io/)**: Spotify Web API Python library
-- **[NumPy](https://numpy.org/)**: Numerical computing
+- Add screenshot here: Webcam emotion detection window
+- Add screenshot here: Spotify authentication screen
+- Add screenshot here: Playback/recommendation result
 
-## 🔒 Security Notes
+## Future Improvements
 
-- **Never commit** `spotify_config.py` with real credentials
-- **Never commit** `.cache-spotify` (Spotify token cache)
-- Add sensitive files to `.gitignore`
-- Consider using environment variables for production deployments
+- Improve emotion detection accuracy with a larger and more diverse dataset
+- Build a richer user interface for better interaction
+- Extend to mobile/web version
+- Add advanced playlist personalization based on user behavior
 
-## 🐛 Troubleshooting
+## Disclaimer
 
-### Webcam Not Opening
-- Ensure no other application is using the camera
-- Grant camera permissions to your terminal/Python
-- Try changing camera index in `cv2.VideoCapture(0)` to `1` or `2`
+- Do not expose API keys or secrets in public repositories.
+- This project is intended for educational and learning purposes.
 
-### Spotify Authentication Fails
-- Verify `REDIRECT_URI` matches your Spotify App settings exactly
-- Check that your Spotify App has the correct permissions
-- Try deleting `.cache-spotify` and re-authenticating with `r` key
+## Author
 
-### Model Not Found
-- Ensure `best.pt` exists in the project root
-- Update `MODEL_PATH` in `config.py` if stored elsewhere
+**Abhilash M**
 
-### Low Detection Accuracy
-- Adjust `CONFIDENCE` threshold in `config.py`
-- Ensure good lighting conditions
-- Face the camera directly
-
-## 📝 TODO / Future Enhancements
-- [ ] Implement emotion history tracking
-- [ ] Create custom playlist generation based on mood patterns
-- [ ] Add GUI with Tkinter/PyQt
-- [ ] Support for local music playback (non-Spotify)
-- [ ] Docker containerization
-- [ ] Deploy as web application
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome!
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📜 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [Ultralytics YOLOv11](https://github.com/ultralytics/ultralytics) for the amazing detection framework
-- [Spotify for Developers](https://developer.spotify.com/) for the comprehensive API
-- OpenCV community for computer vision tools
-
-## 📧 Contact
-
-Your Name - [@likhithvc21](https://instagram.com/likhithvc21) - likhithvc.is23@bmsce.ac.in
-
-Project Link: [https://github.com/Likhithvc/Emotion-based-music-recommendation-system](https://github.com/yourusername/YOLOv11-emotion-music-player)
-
----
-
-⭐ **Star this repo if you found it helpful!** ⭐
+Building AI-powered experiences that turn real-world signals into meaningful, user-focused products.
