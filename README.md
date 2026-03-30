@@ -102,26 +102,5 @@ REDIRECT_URI = "http://127.0.0.1:8080/callback"
 
 Make sure the same redirect URI is configured in your Spotify Developer Dashboard.
 
-## Screenshots
-
-- Add screenshot here: Webcam emotion detection window
-- Add screenshot here: Spotify authentication screen
-- Add screenshot here: Playback/recommendation result
-
-## Future Improvements
-
-- Improve emotion detection accuracy with a larger and more diverse dataset
-- Build a richer user interface for better interaction
-- Extend to mobile/web version
-- Add advanced playlist personalization based on user behavior
-
-## Disclaimer
-
-- Do not expose API keys or secrets in public repositories.
-- This project is intended for educational and learning purposes.
-
-## Author
-
-**Abhilash M**
 
 Building AI-powered experiences that turn real-world signals into meaningful, user-focused products.
